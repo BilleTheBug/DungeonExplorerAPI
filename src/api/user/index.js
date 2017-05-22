@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
 import { password as passwordAuth, master, token } from '../../services/passport'
-import { index, showMe, show, create, update, updatePassword, destroy } from './controller'
+import { index, showMe, show, create, update, updatePassword, destroy, createAdmin} from './controller'
 import { schema } from './model'
 export User, { schema } from './model'
 
@@ -21,7 +21,6 @@ const { email, password, name, picture, role } = schema.tree
  * @apiError 401 Admin access only.
  */
 router.get('/',
-  token({ required: true, roles: ['admin'] }),
   query(),
   index)
 
@@ -64,10 +63,20 @@ router.get('/:id',
  * @apiError 401 Master access only.
  * @apiError 409 Email already registered.
  */
-router.post('/',
-  master(),
+router.post('/admin',
+  token({ required: true, roles: ['admin'] }),
   body({ email, password, name, picture, role }),
   create)
+
+
+//creates a new user with role user.
+router.post('/',
+  body({ email, password, name, picture}),
+  create)
+
+
+
+
 
 /**
  * @api {put} /users/:id Update user

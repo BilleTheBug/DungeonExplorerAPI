@@ -31,8 +31,6 @@ const router = new Router()
  */
 router.use('/users', user);
 router.use('/auth', auth);
-router.use('/topic', topic);
 router.use('/topics', topic);
-router.use('/assmama', assmama);
 
 export default router
