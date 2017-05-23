@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import { middleware as query } from 'querymen'
 import { middleware as body } from 'bodymen'
-import { password as passwordAuth, token } from '../../services/passport'
-import { index, showMe, show, create, update, updatePassword, destroy} from './controller'
+import { password as passwordAuth, master, token } from '../../services/passport'
+import { index, showMe, show, create, update, updatePassword, destroy } from './controller'
 import { schema } from './model'
 export User, { schema } from './model'
 
@@ -64,19 +64,19 @@ router.get('/:id',
  * @apiError 409 Email already registered.
  */
 router.post('/admin',
-  token({ required: true, roles: ['admin'] }),
+  token({ required: true, roles: ['Admin'] }),
   body({ email, password, name, picture, role }),
   create)
 
-
-//creates a new user with role user.
+// creates a new user with role user.
 router.post('/',
-  body({ email, password, name, picture}),
+  body({email, password, name, picture}),
   create)
 
-
-
-
+router.post('/master',
+  master(),
+  body({ email, password, name, picture, role }),
+  create)
 
 /**
  * @api {put} /users/:id Update user
@@ -123,7 +123,7 @@ router.put('/:id/password',
  * @apiError 404 User not found.
  */
 router.delete('/:id',
-  token({ required: true, roles: ['admin'] }),
+  token({ required: true, roles: ['Admin'] }),
   destroy)
 
 export default router

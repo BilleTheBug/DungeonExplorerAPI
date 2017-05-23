@@ -1,9 +1,11 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose, {Schema} from 'mongoose'
+const topicTypes = ['News', 'General', 'Support']
 
 const topicSchema = new Schema({
   user: {
     type: Schema.ObjectId,
     ref: 'User',
+    index: {unique: false},
     required: true
   },
   title: {
@@ -16,11 +18,15 @@ const topicSchema = new Schema({
     type: String
   },
   topicType: {
-    type: String
+    type: String,
+    enum: topicTypes,
+    default: 'General',
+    required: true
   },
-  subTopics: {
-    type: String
-  }
+  subTopics: [{
+    type: Schema.ObjectId,
+    ref: 'Topic'
+  }]
 }, {
   timestamps: true
 })

@@ -5,14 +5,13 @@ import mongoose, { Schema } from 'mongoose'
 import mongooseKeywords from 'mongoose-keywords'
 import { env } from '../../config'
 
-const roles = ['user', 'admin']
+const roles = ['User', 'Admin']
 
 const userSchema = new Schema({
   email: {
     type: String,
     match: /^\S+@\S+\.\S+$/,
     required: true,
-    unique: true,
     trim: true,
     lowercase: true
   },
@@ -32,7 +31,7 @@ const userSchema = new Schema({
   role: {
     type: String,
     enum: roles,
-    default: 'user'
+    default: 'User'
   },
   picture: {
     type: String,

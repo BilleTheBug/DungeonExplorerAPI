@@ -1,14 +1,3 @@
-import { Router } from 'express'
-import { middleware as query } from 'querymen'
-import { middleware as body } from 'bodymen'
-import { token } from '../../services/passport'
-import { create, index, show, update, destroy } from './controller'
-import { schema } from './model'
-export Topic, { schema } from './model'
-
-const router = new Router()
-const { title, message, imageUrl, topicType, subTopics } = schema.tree
-
 /**
  * @api {post} /topics Create topic
  * @apiName CreateTopic
@@ -25,6 +14,17 @@ const { title, message, imageUrl, topicType, subTopics } = schema.tree
  * @apiError 404 Topic not found.
  * @apiError 401 user access only.
  */
+import { Router } from 'express'
+import { middleware as query } from 'querymen'
+import { middleware as body } from 'bodymen'
+import { token } from '../../services/passport'
+import {create, index, show, update, destroy, addTopic} from './controller'
+import { schema } from './model'
+export Topic, { schema } from './model'
+
+const router = new Router()
+const { title, message, imageUrl, topicType, subTopics } = schema.tree
+
 router.post('/',
   token({ required: true }),
   body({ title, message, imageUrl, topicType, subTopics }),
@@ -70,7 +70,7 @@ router.get('/:id',
  * @apiError 401 admin access only.
  */
 router.put('/:id',
-  token({ required: true, roles: ['admin'] }),
+  token({ required: true, roles: ['Admin'] }),
   body({ title, message, imageUrl, topicType, subTopics }),
   update)
 
@@ -85,7 +85,16 @@ router.put('/:id',
  * @apiError 401 admin access only.
  */
 router.delete('/:id',
-  token({ required: true, roles: ['admin'] }),
+  token({ required: true, roles: ['Admin'] }),
   destroy)
+
+/**
+ * AddTopicToTopic
+ */
+router.post('/:id/subtopics',
+  // Token giver user med! Derfor er den required
+  token({ required: true }),
+body({title, message, imageUrl, topicType}),
+addTopic)
 
 export default router
