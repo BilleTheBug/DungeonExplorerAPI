@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { success, notFound, authorOrAdmin } from '../../services/response/'
+import { success, notFound } from '../../services/response/'
 import { Topic } from '.'
 
 export const create = ({ user, bodymen: { body } }, res, next) =>
@@ -17,32 +17,24 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
 
 export const show = ({ params }, res, next) =>
   Topic.findById(params.id)
+    .populate('user')
     .then(notFound(res))
     .then((topic) => topic ? topic.view() : null)
     .then(success(res))
     .catch(next)
-/*export const show = ({ params }, res, next) =>
-  Topic.findById(params.id)
-    .populate('user')
-    .then(notFound(res))
-    .then((topic) => topic ? topic.view() : null)
-    .then(success(res))
-    .catch(next)*/
 
-export const update = ({ user, bodymen: { body }, params }, res, next) =>
+export const update = ({ bodymen: { body }, params }, res, next) =>
   Topic.findById(params.id)
     .populate('user')
     .then(notFound(res))
-    .then(authorOrAdmin(res, user, 'user'))
     .then((topic) => topic ? _.merge(topic, body).save() : null)
     .then((topic) => topic ? topic.view(true) : null)
     .then(success(res))
     .catch(next)
 
-export const destroy = ({ user, params }, res, next) =>
+export const destroy = ({ params }, res, next) =>
   Topic.findById(params.id)
     .then(notFound(res))
-    .then(authorOrAdmin(res, user, 'user'))
     .then((topic) => topic ? topic.remove() : null)
     .then(success(res, 204))
     .catch(next)

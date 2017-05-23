@@ -7,7 +7,7 @@ import { schema } from './model'
 export Topic, { schema } from './model'
 
 const router = new Router()
-const { id, title, topicType, content, parent, subTopics } = schema.tree
+const { title, message, imageUrl, topicType, subTopics } = schema.tree
 
 /**
  * @api {post} /topics Create topic
@@ -15,12 +15,10 @@ const { id, title, topicType, content, parent, subTopics } = schema.tree
  * @apiGroup Topic
  * @apiPermission user
  * @apiParam {String} access_token user access token.
- * @apiParam id Topic's id.
  * @apiParam title Topic's title.
+ * @apiParam message Topic's message.
+ * @apiParam imageUrl Topic's imageUrl.
  * @apiParam topicType Topic's topicType.
- * @apiParam timeStamp Topic's timeStamp.
- * @apiParam content Topic's content.
- * @apiParam parent Topic's parent.
  * @apiParam subTopics Topic's subTopics.
  * @apiSuccess {Object} topic Topic's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
@@ -29,7 +27,7 @@ const { id, title, topicType, content, parent, subTopics } = schema.tree
  */
 router.post('/',
   token({ required: true }),
-  body({ id, title, topicType, content, parent, subTopics }),
+  body({ title, message, imageUrl, topicType, subTopics }),
   create)
 
 /**
@@ -59,37 +57,35 @@ router.get('/:id',
  * @api {put} /topics/:id Update topic
  * @apiName UpdateTopic
  * @apiGroup Topic
- * @apiPermission user
- * @apiParam {String} access_token user access token.
- * @apiParam id Topic's id.
+ * @apiPermission admin
+ * @apiParam {String} access_token admin access token.
  * @apiParam title Topic's title.
+ * @apiParam message Topic's message.
+ * @apiParam imageUrl Topic's imageUrl.
  * @apiParam topicType Topic's topicType.
- * @apiParam timeStamp Topic's timeStamp.
- * @apiParam content Topic's content.
- * @apiParam parent Topic's parent.
  * @apiParam subTopics Topic's subTopics.
  * @apiSuccess {Object} topic Topic's data.
  * @apiError {Object} 400 Some parameters may contain invalid values.
  * @apiError 404 Topic not found.
- * @apiError 401 user access only.
+ * @apiError 401 admin access only.
  */
 router.put('/:id',
-  token({ required: true }),
-  body({ id, title, topicType, content, parent, subTopics }),
+  token({ required: true, roles: ['admin'] }),
+  body({ title, message, imageUrl, topicType, subTopics }),
   update)
 
 /**
  * @api {delete} /topics/:id Delete topic
  * @apiName DeleteTopic
  * @apiGroup Topic
- * @apiPermission user
- * @apiParam {String} access_token user access token.
+ * @apiPermission admin
+ * @apiParam {String} access_token admin access token.
  * @apiSuccess (Success 204) 204 No Content.
  * @apiError 404 Topic not found.
- * @apiError 401 user access only.
+ * @apiError 401 admin access only.
  */
 router.delete('/:id',
-  token({ required: true }),
+  token({ required: true, roles: ['admin'] }),
   destroy)
 
 export default router

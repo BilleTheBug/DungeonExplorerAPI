@@ -1,7 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
 
-const topicTypes = ['News', 'General', 'Support']
-
 const topicSchema = new Schema({
   user: {
     type: Schema.ObjectId,
@@ -9,20 +7,15 @@ const topicSchema = new Schema({
     required: true
   },
   title: {
-    type: String,
-    required: true
+    type: String
+  },
+  message: {
+    type: String
+  },
+  imageUrl: {
+    type: String
   },
   topicType: {
-    type: String,
-    enum: topicTypes,
-    default: 'General',
-    required: true
-  },
-  content: {
-    type: String,
-    required: true
-  },
-  parent: {
     type: String
   },
   subTopics: {
@@ -39,10 +32,9 @@ topicSchema.methods = {
       id: this.id,
       user: this.user.view(full),
       title: this.title,
+      message: this.message,
+      imageUrl: this.imageUrl,
       topicType: this.topicType,
-      timeStamp: this.timeStamp,
-      content: this.content,
-      parent: this.parent,
       subTopics: this.subTopics,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt

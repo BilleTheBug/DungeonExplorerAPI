@@ -3,6 +3,7 @@ import user from './user'
 import auth from './auth'
 import topic from './topic'
 import assmama from './assmama'
+import topic from './topic'
 
 const router = new Router()
 
@@ -32,5 +33,6 @@ const router = new Router()
 router.use('/users', user);
 router.use('/auth', auth);
 router.use('/topics', topic);
+router.use('/topics', topic)
 
 export default router

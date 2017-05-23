@@ -6,28 +6,26 @@ import routes, { Topic } from '.'
 
 const app = () => express(routes)
 
-let userSession, anotherSession, topic
+let userSession, adminSession, topic
 
 beforeEach(async () => {
   const user = await User.create({ email: 'a@a.com', password: '123456' })
-  const anotherUser = await User.create({ email: 'b@b.com', password: '123456' })
+  const admin = await User.create({ email: 'c@c.com', password: '123456', role: 'admin' })
   userSession = signSync(user.id)
-  anotherSession = signSync(anotherUser.id)
+  adminSession = signSync(admin.id)
   topic = await Topic.create({ user })
 })
 
 test('POST /topics 201 (user)', async () => {
   const { status, body } = await request(app())
     .post('/')
-    .send({ access_token: userSession, id: 'test', title: 'test', topicType: 'test', timeStamp: 'test', content: 'test', parent: 'test', subTopics: 'test' })
+    .send({ access_token: userSession, title: 'test', message: 'test', imageUrl: 'test', topicType: 'test', subTopics: 'test' })
   expect(status).toBe(201)
   expect(typeof body).toEqual('object')
-  expect(body.id).toEqual('test')
   expect(body.title).toEqual('test')
+  expect(body.message).toEqual('test')
+  expect(body.imageUrl).toEqual('test')
   expect(body.topicType).toEqual('test')
-  expect(body.timeStamp).toEqual('test')
-  expect(body.content).toEqual('test')
-  expect(body.parent).toEqual('test')
   expect(body.subTopics).toEqual('test')
   expect(typeof body.user).toEqual('object')
 })
@@ -59,27 +57,24 @@ test('GET /topics/:id 404', async () => {
   expect(status).toBe(404)
 })
 
-test('PUT /topics/:id 200 (user)', async () => {
+test('PUT /topics/:id 200 (admin)', async () => {
   const { status, body } = await request(app())
     .put(`/${topic.id}`)
-    .send({ access_token: userSession, id: 'test', title: 'test', topicType: 'test', timeStamp: 'test', content: 'test', parent: 'test', subTopics: 'test' })
+    .send({ access_token: adminSession, title: 'test', message: 'test', imageUrl: 'test', topicType: 'test', subTopics: 'test' })
   expect(status).toBe(200)
   expect(typeof body).toEqual('object')
   expect(body.id).toEqual(topic.id)
-  expect(body.id).toEqual('test')
   expect(body.title).toEqual('test')
+  expect(body.message).toEqual('test')
+  expect(body.imageUrl).toEqual('test')
   expect(body.topicType).toEqual('test')
-  expect(body.timeStamp).toEqual('test')
-  expect(body.content).toEqual('test')
-  expect(body.parent).toEqual('test')
   expect(body.subTopics).toEqual('test')
-  expect(typeof body.user).toEqual('object')
 })
 
-test('PUT /topics/:id 401 (user) - another user', async () => {
+test('PUT /topics/:id 401 (user)', async () => {
   const { status } = await request(app())
     .put(`/${topic.id}`)
-    .send({ access_token: anotherSession, id: 'test', title: 'test', topicType: 'test', timeStamp: 'test', content: 'test', parent: 'test', subTopics: 'test' })
+    .send({ access_token: userSession })
   expect(status).toBe(401)
 })
 
@@ -89,24 +84,24 @@ test('PUT /topics/:id 401', async () => {
   expect(status).toBe(401)
 })
 
-test('PUT /topics/:id 404 (user)', async () => {
+test('PUT /topics/:id 404 (admin)', async () => {
   const { status } = await request(app())
     .put('/123456789098765432123456')
-    .send({ access_token: anotherSession, id: 'test', title: 'test', topicType: 'test', timeStamp: 'test', content: 'test', parent: 'test', subTopics: 'test' })
+    .send({ access_token: adminSession, title: 'test', message: 'test', imageUrl: 'test', topicType: 'test', subTopics: 'test' })
   expect(status).toBe(404)
 })
 
-test('DELETE /topics/:id 204 (user)', async () => {
+test('DELETE /topics/:id 204 (admin)', async () => {
   const { status } = await request(app())
     .delete(`/${topic.id}`)
-    .query({ access_token: userSession })
+    .query({ access_token: adminSession })
   expect(status).toBe(204)
 })
 
-test('DELETE /topics/:id 401 (user) - another user', async () => {
+test('DELETE /topics/:id 401 (user)', async () => {
   const { status } = await request(app())
     .delete(`/${topic.id}`)
-    .send({ access_token: anotherSession })
+    .query({ access_token: userSession })
   expect(status).toBe(401)
 })
 
@@ -116,9 +111,9 @@ test('DELETE /topics/:id 401', async () => {
   expect(status).toBe(401)
 })
 
-test('DELETE /topics/:id 404 (user)', async () => {
+test('DELETE /topics/:id 404 (admin)', async () => {
   const { status } = await request(app())
     .delete('/123456789098765432123456')
-    .query({ access_token: anotherSession })
+    .query({ access_token: adminSession })
   expect(status).toBe(404)
 })
