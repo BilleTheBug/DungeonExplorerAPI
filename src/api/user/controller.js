@@ -35,23 +35,6 @@ export const create = ({ bodymen: { body } }, res, next) =>
       }
     })
 
-export const createAdmin = ({ bodymen: { body } }, res, next) =>
-  User.create(body)
-    .then((user) => user.view(true))
-    .then(success(res, 201))
-    .catch((err) => {
-      /* istanbul ignore else */
-      if (err.name === 'MongoError' && err.code === 11000) {
-        res.status(409).json({
-          valid: false,
-          param: 'email',
-          message: 'email already registered'
-        })
-      } else {
-        next(err)
-      }
-    })
-
 export const update = ({ bodymen: { body }, params, user }, res, next) =>
   User.findById(params.id === 'me' ? user.id : params.id)
     .then(notFound(res))

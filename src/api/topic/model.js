@@ -1,5 +1,5 @@
 import mongoose, {Schema} from 'mongoose'
-const topicTypes = ['News', 'General', 'Support']
+const TopicTypes = ['News', 'General', 'Support', 'Comments']
 
 const topicSchema = new Schema({
   user: {
@@ -18,8 +18,7 @@ const topicSchema = new Schema({
     type: String
   },
   topicType: {
-    type: String,
-    enum: topicTypes,
+    type: TopicTypes,
     default: 'General',
     required: true
   },

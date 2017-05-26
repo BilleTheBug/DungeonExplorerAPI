@@ -12,7 +12,6 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
   Topic.find(query, select, cursor)
     .populate('user')
     // Populate giver alle subTopics med son hele objekter
-    .populate('subTopics')
     .then((topics) => topics.map((topic) => topic.view()))
     .then(success(res))
     .catch(next)
@@ -20,7 +19,6 @@ export const index = ({ querymen: { query, select, cursor } }, res, next) =>
 export const show = ({ params }, res, next) =>
   Topic.findById(params.id)
     .populate('user')
-    .populate('subTopics')
     .then(notFound(res))
     .then((topic) => topic ? topic.view() : null)
     .then(success(res))

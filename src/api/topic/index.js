@@ -27,7 +27,7 @@ const { title, message, imageUrl, topicType, subTopics } = schema.tree
 
 router.post('/',
   token({ required: true }),
-  body({ title, message, imageUrl, topicType, subTopics }),
+  body({ title, message, imageUrl, topicType }),
   create)
 
 /**
@@ -85,7 +85,7 @@ router.put('/:id',
  * @apiError 401 admin access only.
  */
 router.delete('/:id',
-  token({ required: true, roles: ['Admin'] }),
+  token({required: true}),
   destroy)
 
 /**

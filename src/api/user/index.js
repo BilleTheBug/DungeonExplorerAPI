@@ -36,6 +36,7 @@ router.get('/me',
   token({ required: true }),
   showMe)
 
+
 /**
  * @api {get} /users/:id Retrieve user
  * @apiName RetrieveUser
